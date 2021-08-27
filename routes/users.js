@@ -1,3 +1,22 @@
+const express = require("express");
+const router = new express.Router();
+
+const User = require("../models/user")
+
+
+router.post('/register', async (req, res, next) => {
+    try {
+
+        const { username, password, first_name, last_name, phone } = req.body;
+        debugger;
+        const result = await User.register({ username, password, first_name, last_name, phone });
+        console.log(`RESULT INSIDE ROUTE ${result}`);
+        return res.json({ newUser: result.rows[0] });
+
+    } catch (error) {
+        return next(error);
+    }
+})
 /** GET / - get list of users.
  *
  * => {users: [{username, first_name, last_name, phone}, ...]}
@@ -32,3 +51,5 @@
  *                 to_user: {username, first_name, last_name, phone}}, ...]}
  *
  **/
+
+module.exports = router;
