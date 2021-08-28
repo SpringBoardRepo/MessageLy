@@ -46,17 +46,12 @@ class User {
 
   static async authenticate(username, password) {
 
-    try {
-      const userDetails = await User.get(username);
-      // await db.query(`SELECT * FROM users WHERE username = $1`, [username]);
-      const user = userDetails.rows[0];
-      if (user) {
-        const loginuser = await bcrypt.compare(password, user.pass);
-        return loginuser && userDetails;
-      }
-    } catch (error) {
-      return next(error)
-    }
+
+    const userDetails = await db.query(`SELECT password FROM users WHERE username = $1`, [username]);
+    console.log(userDetails.rows[0].password);
+    const userpass = userDetails.rows[0].password;
+    const loginuser = await bcrypt.compare(password, userpass);
+    return loginuser && userDetails;
 
   }
 
@@ -115,13 +110,13 @@ class User {
   static async messagesFrom(username) {
 
     const result = await db.query(`SELECT m.id, u.username,u.first_name,u.last_name,u.phone,m.body,m.sent_at,m.read_at
-    FROM messages AS m JOIN users AS u on m.to_username = u.username WHERE to_username=$1`, [username]);
+    FROM messages AS m JOIN users AS u on m.to_username = u.username WHERE from_username=$1`, [username]);
 
     return result.rows.map(m => ({
       id: m.id,
       to_user: {
         username: m.to_username,
-        first_name = m.first_name,
+        first_name: m.first_name,
         last_name: m.last_name,
         phone: m.phone
       },
@@ -141,14 +136,14 @@ class User {
 
   static async messagesTo(username) {
 
-    const result = await db.query(`SELECT m.id,u.id,u.first_name,u.last_name,u.phone, m.body,m.sent_at,m.read_at
-    FROM messages AS m JOIN users AS u on m.from_username = u.username WHERE from_username=$1`, [username]);
+    const result = await db.query(`SELECT m.id,u.first_name,u.last_name,u.phone, m.body,m.sent_at,m.read_at
+    FROM messages AS m JOIN users AS u on m.from_username = u.username WHERE to_username=$1`, [username]);
 
     return result.rows.map(m => ({
       id: m.id,
       from_user: {
         username: m.from_username,
-        first_name = m.first_name,
+        first_name: m.first_name,
         last_name: m.last_name,
         phone: m.phone
       },

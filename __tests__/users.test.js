@@ -33,7 +33,7 @@ describe("Test User class", function () {
     let isValid = await User.authenticate("test", "password");
     expect(isValid).toBeTruthy();
 
-    isValid =  await User.authenticate("test", "xxx");
+    isValid = await User.authenticate("test", "xxx");
     expect(isValid).toBeFalsy();
   });
 
@@ -55,8 +55,9 @@ describe("Test User class", function () {
       first_name: "Test",
       last_name: "Testy",
       phone: "+14155550000",
+      password: expect.any(String),
       last_login_at: expect.any(Date),
-      join_at: expect.any(Date),
+      join_at: expect.any(Date)
     });
   });
 
@@ -66,7 +67,10 @@ describe("Test User class", function () {
       username: "test",
       first_name: "Test",
       last_name: "Testy",
-      phone: "+14155550000"
+      phone: "+14155550000",
+      password: expect.any(String),
+      last_login_at: expect.any(Date),
+      join_at: expect.any(Date),
     }]);
   });
 });
@@ -136,6 +140,6 @@ describe("Test messages part of User class", function () {
   });
 });
 
-afterAll(async function() {
+afterAll(async function () {
   await db.end();
 });

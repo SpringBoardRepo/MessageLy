@@ -46,4 +46,12 @@ router.post('/', async (req, res, next) => {
  *
  **/
 
+router.post('/:id/read', async (req, res, next) => {
+
+    const { id } = req.params;
+    const result = await Message.markRead(id);
+
+    return res.json({ message: result });
+})
+
 module.exports = Message;
